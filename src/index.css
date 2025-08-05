@@ -141,4 +141,85 @@ All colors MUST be HSL.
       text-shadow: 0 0 10px currentColor, 0 0 20px currentColor, 0 0 30px currentColor;
     }
   }
+
+  /* Wallet adapter overrides */
+  .wallet-adapter-button-wrapper {
+    display: contents;
+  }
+
+  .wallet-adapter-button {
+    background: var(--gradient-primary) !important;
+    border: 1px solid hsl(var(--neon-purple)) !important;
+    border-radius: var(--radius) !important;
+    color: white !important;
+    font-weight: 600 !important;
+    transition: var(--transition-glow) !important;
+    box-shadow: var(--glow-primary) !important;
+  }
+
+  .wallet-adapter-button:hover:not([disabled]) {
+    box-shadow: var(--glow-accent) !important;
+    transform: translateY(-2px) !important;
+  }
+
+  .wallet-adapter-button[disabled] {
+    opacity: 0.6 !important;
+    cursor: not-allowed !important;
+  }
+
+  .wallet-adapter-dropdown {
+    background: hsl(var(--card)) !important;
+    border: 1px solid hsl(var(--border)) !important;
+    border-radius: var(--radius) !important;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3) !important;
+  }
+
+  .wallet-adapter-dropdown-list {
+    background: transparent !important;
+  }
+
+  .wallet-adapter-dropdown-list-item {
+    background: transparent !important;
+    color: hsl(var(--foreground)) !important;
+    border-radius: calc(var(--radius) - 2px) !important;
+    transition: background-color 0.2s !important;
+  }
+
+  .wallet-adapter-dropdown-list-item:hover {
+    background: hsl(var(--muted)) !important;
+  }
+
+  .wallet-adapter-modal-wrapper {
+    background: rgba(0, 0, 0, 0.8) !important;
+    backdrop-filter: blur(8px) !important;
+  }
+
+  .wallet-adapter-modal {
+    background: hsl(var(--card)) !important;
+    border: 1px solid hsl(var(--border)) !important;
+    border-radius: var(--radius) !important;
+    color: hsl(var(--foreground)) !important;
+  }
+
+  .wallet-adapter-modal-title {
+    color: hsl(var(--foreground)) !important;
+  }
+
+  .wallet-adapter-modal-list {
+    background: transparent !important;
+  }
+
+  .wallet-adapter-modal-list-item {
+    background: hsl(var(--muted) / 0.1) !important;
+    border: 1px solid hsl(var(--border)) !important;
+    border-radius: calc(var(--radius) - 2px) !important;
+    color: hsl(var(--foreground)) !important;
+    transition: all 0.2s !important;
+  }
+
+  .wallet-adapter-modal-list-item:hover {
+    background: hsl(var(--muted) / 0.2) !important;
+    border-color: hsl(var(--neon-purple)) !important;
+    box-shadow: 0 0 10px hsl(var(--neon-purple) / 0.3) !important;
+  }
 }

@@ -38,7 +38,17 @@ export const SolanaProvider: FC<SolanaProviderProps> = ({ children }) => {
 
   return (
     <ConnectionProvider endpoint={network}>
-      <WalletProvider wallets={wallets} autoConnect>
+      <WalletProvider 
+        wallets={wallets} 
+        autoConnect={false}
+        onError={(error) => {
+          console.error('Wallet error:', error);
+          // Don't show toast for disconnect errors, as they're often expected
+          if (!error.message.includes('disconnected')) {
+            console.error('Wallet adapter error:', error);
+          }
+        }}
+      >
         <WalletModalProvider>
           {children}
         </WalletModalProvider>
