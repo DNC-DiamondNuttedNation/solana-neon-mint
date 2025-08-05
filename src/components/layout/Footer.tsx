@@ -7,7 +7,7 @@ export const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <div>
             <h3 className="text-lg font-semibold text-neon-purple mb-4">
-              Diamond Gifted Chain
+              Diamond Nutted Nation
             </h3>
             <p className="text-muted-foreground text-sm">
               Premium NFT collection for the ultimate play-to-earn card battle experience on Solana.
@@ -56,7 +56,7 @@ export const Footer = () => {
         </div>
         
         <div className="border-t border-border/20 mt-8 pt-8 text-center text-sm text-muted-foreground">
-          <p>&copy; 2024 Diamond Gifted Chain. Built on Solana Devnet.</p>
+          <p>&copy; 2024 Diamond Nutted Nation. Built on Solana Devnet.</p>
         </div>
       </div>
     </footer>

@@ -12,7 +12,7 @@ export const Header = () => {
           />
           <div>
             <h1 className="text-2xl font-bold neon-glow text-neon-purple">
-              Diamond Gifted Chain
+              Diamond Nutted Nation
             </h1>
             <p className="text-sm text-muted-foreground">
               Premium NFT Collection on Solana

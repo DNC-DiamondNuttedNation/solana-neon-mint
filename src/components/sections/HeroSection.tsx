@@ -16,7 +16,7 @@ export const HeroSection = () => {
         </Badge>
         
         <h1 className="text-5xl md:text-7xl font-bold mb-6 neon-glow pulse-glow text-transparent bg-clip-text bg-gradient-primary">
-          Diamond Gifted Chain
+          Diamond Nutted Nation
         </h1>
         
         <p className="text-xl md:text-2xl text-muted-foreground mb-8 max-w-3xl mx-auto">

@@ -7,26 +7,13 @@ import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
 import { Loader2, Zap, Shield, Coins } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
 
-interface MintCardProps {
-  candyMachineId?: string;
-  collectionAddress?: string;
-  onCandyMachineUpdate?: (candyMachineId: string) => void;
-  onCollectionUpdate?: (collectionAddress: string) => void;
-}
-
-export const MintCard = ({ 
-  candyMachineId = '', 
-  collectionAddress = '',
-  onCandyMachineUpdate,
-  onCollectionUpdate
-}: MintCardProps) => {
+export const MintCard = () => {
   const { publicKey, connected } = useWallet();
   const { connection } = useConnection();
   const [isLoading, setIsLoading] = useState(false);
   const [mintQuantity, setMintQuantity] = useState(1);
-  const [localCandyMachineId, setLocalCandyMachineId] = useState(candyMachineId);
-  const [localCollectionAddress, setLocalCollectionAddress] = useState(collectionAddress);
 
   const handleMint = async () => {
     if (!connected || !publicKey) {
@@ -34,24 +21,34 @@ export const MintCard = ({
       return;
     }
 
-    if (!localCandyMachineId) {
-      toast.error('Please enter your Candy Machine ID');
-      return;
-    }
-
     setIsLoading(true);
     try {
-      // Here you would integrate with Metaplex Candy Machine
-      // For now, we'll show a placeholder
-      toast.info('Minting functionality will be implemented with your Candy Machine ID');
+      console.log('Starting mint process...');
       
-      // Simulate mint delay
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      // Call the backend edge function to handle minting
+      const { data, error } = await supabase.functions.invoke('mint-nft', {
+        body: {
+          walletAddress: publicKey.toString(),
+          quantity: mintQuantity
+        }
+      });
+
+      if (error) {
+        throw new Error(error.message || 'Minting failed');
+      }
+
+      if (!data.success) {
+        throw new Error(data.error || 'Minting failed');
+      }
+
+      console.log('Mint successful:', data.data);
+      toast.success(`Successfully minted ${mintQuantity} NFT${mintQuantity > 1 ? 's' : ''}!`, {
+        description: `Transaction: ${data.data.transactionSignature.slice(0, 20)}...`
+      });
       
-      toast.success(`Successfully minted ${mintQuantity} NFT${mintQuantity > 1 ? 's' : ''}!`);
     } catch (error) {
       console.error('Mint failed:', error);
-      toast.error('Minting failed. Please try again.');
+      toast.error(`Minting failed: ${error.message}`);
     } finally {
       setIsLoading(false);
     }
@@ -68,41 +65,6 @@ export const MintCard = ({
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
-        {/* Candy Machine Configuration */}
-        <div className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="candyMachine" className="text-foreground">
-              Candy Machine ID
-            </Label>
-            <Input
-              id="candyMachine"
-              placeholder="Enter your Candy Machine ID"
-              value={localCandyMachineId}
-              onChange={(e) => {
-                setLocalCandyMachineId(e.target.value);
-                onCandyMachineUpdate?.(e.target.value);
-              }}
-              className="neon-border bg-input/50"
-            />
-          </div>
-          
-          <div className="space-y-2">
-            <Label htmlFor="collection" className="text-foreground">
-              Collection Address
-            </Label>
-            <Input
-              id="collection"
-              placeholder="Enter your Collection Address"
-              value={localCollectionAddress}
-              onChange={(e) => {
-                setLocalCollectionAddress(e.target.value);
-                onCollectionUpdate?.(e.target.value);
-              }}
-              className="neon-border bg-input/50"
-            />
-          </div>
-        </div>
-
         {/* Mint Quantity */}
         <div className="space-y-2">
           <Label htmlFor="quantity" className="text-foreground">
@@ -156,7 +118,7 @@ export const MintCard = ({
         {/* Mint Button */}
         <Button
           onClick={handleMint}
-          disabled={!connected || isLoading || !localCandyMachineId}
+          disabled={!connected || isLoading}
           className="w-full neon-button h-12 text-lg font-bold"
           size="lg"
         >

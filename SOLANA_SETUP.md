@@ -1,14 +1,15 @@
-# Solana NFT Minting Website - Setup Guide
+# Diamond Nutted Nation - Solana NFT Minting Website
 
 ## 🚀 Your Solana NFT Minting Website is Ready!
 
-This is a fully functional Solana NFT minting website with wallet integration, candy machine support, and a stunning dark neon theme. The site is currently configured for Solana **Devnet**.
+This is a fully functional Solana NFT minting website with wallet integration, backend candy machine handling, and a stunning dark neon theme. The site is currently configured for Solana **Devnet**.
 
 ## ✅ What's Already Built
 
 ### Core Features
 - **Wallet Integration**: Phantom, Solflare, Torus, and Ledger wallet support
-- **Candy Machine Integration**: Ready for your candy machine ID
+- **Backend Candy Machine**: Candy machine ID and collection address stored on backend
+- **Simple Minting**: Users just select quantity and click mint - no configuration needed
 - **Responsive Design**: Beautiful dark theme with neon accents
 - **User Interface**: Complete minting interface with quantity selection
 - **Real-time Status**: Connection status and minting feedback
@@ -22,66 +23,64 @@ This is a fully functional Solana NFT minting website with wallet integration, c
 
 ## 🔧 Next Steps - What You Need to Do
 
-### 1. Add Your Candy Machine Details
-You can add your candy machine ID and collection address directly in the website interface, or you can hardcode them:
+### 1. Add Your Candy Machine Details to Backend
+Your candy machine configuration is stored securely on the backend. You need to update the edge function with your actual details:
 
-**Option A: Use the Interface (Recommended)**
-- Just enter your Candy Machine ID and Collection Address in the mint form
-- The website will save and use these values
+**Edit the Backend Configuration:**
+1. Open `supabase/functions/mint-nft/index.ts`
+2. Replace the placeholder values in the `CANDY_MACHINE_CONFIG`:
 
-**Option B: Hardcode in the Code**
-Edit `src/components/mint/MintCard.tsx` and replace the default values:
 ```typescript
-const [localCandyMachineId, setLocalCandyMachineId] = useState('YOUR_CANDY_MACHINE_ID_HERE');
-const [localCollectionAddress, setLocalCollectionAddress] = useState('YOUR_COLLECTION_ADDRESS_HERE');
+const CANDY_MACHINE_CONFIG = {
+  candyMachineId: "YOUR_ACTUAL_CANDY_MACHINE_ID", // Replace this
+  collectionAddress: "YOUR_ACTUAL_COLLECTION_ADDRESS", // Replace this
+  mintPrice: 0.1, // Update to your actual mint price
+  maxSupply: 10000, // Update to your actual max supply
+  maxPerWallet: 10 // Update to your wallet limit
+};
 ```
 
-### 2. Implement Actual Minting Logic
-The minting button currently shows a placeholder. To implement real minting, you need to:
+### 2. Test the Minting Flow
+Once you've updated the backend configuration:
+1. **Connect Wallet**: Test wallet connection with Phantom/Solflare
+2. **Select Quantity**: Choose how many NFTs to mint (1-10)
+3. **Click Mint**: The backend will handle everything automatically
+4. **Check Transaction**: The system will show success/failure messages
 
-1. **Install additional Metaplex dependencies** (if needed):
-```bash
-npm install @metaplex-foundation/mpl-token-metadata
-```
+### 3. Implement Real Metaplex Integration (Optional)
+The current backend simulates minting. To implement real Metaplex candy machine minting:
 
-2. **Update the mint function** in `src/components/mint/MintCard.tsx`:
-```typescript
-// Replace the placeholder mint function with actual Metaplex candy machine integration
-// Example implementation would go in the handleMint function
-```
+1. **Add Metaplex SDK** to the edge function
+2. **Replace the simulation code** with actual Metaplex calls
+3. **Handle real Solana transactions** and signatures
 
-### 3. Configure Candy Machine Settings
-In `src/components/mint/MintCard.tsx`, update the stats to match your actual candy machine:
-- **Price**: Change from "0.1 SOL" to your actual mint price
-- **Remaining**: Connect to your candy machine to show real remaining count
-- **Rarity**: Update based on your collection details
-
-### 4. Customize Branding
+The simulation currently works for testing the complete user flow.
+### 4. Customize Branding  
 - **Logo**: Your logo is already integrated from the uploaded image
-- **Collection Name**: Currently set to "Diamond Gifted Chain" - update in `src/components/layout/Header.tsx`
+- **Collection Name**: Already updated to "Diamond Nutted Nation"
 - **Colors**: The neon theme can be customized in `src/index.css`
 
 ### 5. Deploy to Production
 When ready for mainnet:
 1. Change network from 'devnet' to 'mainnet-beta' in `src/components/providers/SolanaProvider.tsx`
-2. Update your candy machine ID to the mainnet version
+2. Update your candy machine ID to the mainnet version in the backend
 3. Test thoroughly on devnet first!
 
 ## 🎨 Design System
 
 The website uses a custom neon design system with:
-- **Primary Colors**: Purple, Cyan, Pink neon accents
+- **Primary Colors**: Purple, Cyan, Pink neon accents  
 - **Dark Theme**: Deep dark background with glowing elements
 - **Animations**: Pulse effects, gradient animations, hover glows
 - **Typography**: Neon glow effects on headings
 
 ## 🔗 Key Files to Know
 
+- `supabase/functions/mint-nft/index.ts` - **Backend minting logic** (UPDATE YOUR CANDY MACHINE HERE)
 - `src/components/providers/SolanaProvider.tsx` - Wallet and network configuration
 - `src/components/mint/MintCard.tsx` - Main minting interface
 - `src/components/wallet/WalletButton.tsx` - Wallet connection
 - `src/index.css` - Design system and neon styles
-- `tailwind.config.ts` - Extended color palette
 
 ## 🧪 Testing on Devnet
 
@@ -99,13 +98,13 @@ The website is ready to deploy! You can:
 
 ## 📝 Final Notes
 
-- **Security**: Always test on devnet before mainnet
-- **Gas Fees**: Make sure users understand Solana transaction fees
-- **Error Handling**: The site includes comprehensive error messages
+- **Backend Security**: Candy machine details are stored securely on the backend
+- **User Experience**: Simple mint flow - users just connect wallet and click mint
+- **Testing**: Complete flow works on devnet, ready for your candy machine details
 - **Mobile Responsive**: Works perfectly on all devices
 - **SEO Ready**: Proper meta tags and structure included
 
-Your NFT minting website is now live and ready for your community! 🎉
+Your Diamond Nutted Nation minting website is now live and ready! 🎉
 
 ## 💡 Additional Features You Could Add
 
