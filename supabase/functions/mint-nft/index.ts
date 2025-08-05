@@ -13,53 +13,58 @@ serve(async (req) => {
   }
 
   try {
-    const { walletAddress, quantity } = await req.json();
+    const { walletAddress, packQuantity } = await req.json();
 
-    console.log(`Mint request received for wallet: ${walletAddress}, quantity: ${quantity}`);
+    console.log(`Pack mint request received for wallet: ${walletAddress}, packs: ${packQuantity}`);
 
     if (!walletAddress) {
       throw new Error('Wallet address is required');
     }
 
-    if (!quantity || quantity < 1 || quantity > 10) {
-      throw new Error('Invalid quantity. Must be between 1 and 10');
+    if (!packQuantity || packQuantity < 1 || packQuantity > 5) {
+      throw new Error('Invalid pack quantity. Must be between 1 and 5');
     }
 
-    // Backend candy machine configuration
-    const CANDY_MACHINE_CONFIG = {
+    // Backend pack configuration
+    const PACK_CONFIG = {
       candyMachineId: "YOUR_CANDY_MACHINE_ID_HERE", // Replace with your actual candy machine ID
       collectionAddress: "YOUR_COLLECTION_ADDRESS_HERE", // Replace with your actual collection address
-      mintPrice: 0.1, // SOL
-      maxSupply: 10000,
-      maxPerWallet: 10
+      packPrice: 0.3, // SOL per pack
+      nftsPerPack: 3, // Each pack contains 3 NFTs
+      maxSupply: 1000, // Total packs available
+      maxPerWallet: 5 // Max packs per wallet
     };
 
-    console.log('Using candy machine configuration:', CANDY_MACHINE_CONFIG);
+    console.log('Using pack configuration:', PACK_CONFIG);
 
-    // Here you would implement the actual Metaplex candy machine minting logic
-    // For now, we'll simulate the minting process and return a success response
+    // Calculate total NFTs to mint (packs * 3 NFTs per pack)
+    const totalNfts = packQuantity * PACK_CONFIG.nftsPerPack;
+    // Here you would implement the actual Metaplex pack opening logic
+    // For now, we'll simulate the pack opening process
     
     // Simulate processing time
     await new Promise(resolve => setTimeout(resolve, 2000));
 
-    // Simulate successful mint
+    // Simulate successful pack opening with 3 NFTs per pack
     const mintResult = {
       success: true,
-      transactionSignature: `simulated_tx_${Date.now()}`,
-      mintedNfts: Array.from({ length: quantity }, (_, i) => ({
+      transactionSignature: `simulated_pack_tx_${Date.now()}`,
+      packsOpened: packQuantity,
+      mintedNfts: Array.from({ length: totalNfts }, (_, i) => ({
         mint: `simulated_mint_${Date.now()}_${i}`,
         tokenAccount: `simulated_token_${Date.now()}_${i}`,
         metadata: {
           name: `Diamond Nutted Nation #${Math.floor(Math.random() * 10000)}`,
           symbol: "DNN",
-          image: "https://your-metadata-url.com/image.png"
+          image: "https://your-metadata-url.com/image.png",
+          rarity: ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary'][Math.floor(Math.random() * 5)]
         }
       })),
-      totalCost: CANDY_MACHINE_CONFIG.mintPrice * quantity,
-      candyMachineId: CANDY_MACHINE_CONFIG.candyMachineId
+      totalCost: PACK_CONFIG.packPrice * packQuantity,
+      candyMachineId: PACK_CONFIG.candyMachineId
     };
 
-    console.log('Mint successful:', mintResult);
+    console.log('Pack opening successful:', mintResult);
 
     return new Response(
       JSON.stringify({

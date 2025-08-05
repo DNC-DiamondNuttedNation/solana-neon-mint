@@ -6,14 +6,17 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
-import { Loader2, Zap, Shield, Coins } from 'lucide-react';
+import { Loader2, Zap, Shield, Coins, Package } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
+import { PackOpening } from './PackOpening';
 
 export const MintCard = () => {
   const { publicKey, connected } = useWallet();
   const { connection } = useConnection();
   const [isLoading, setIsLoading] = useState(false);
-  const [mintQuantity, setMintQuantity] = useState(1);
+  const [packQuantity, setPackQuantity] = useState(1);
+  const [showPackOpening, setShowPackOpening] = useState(false);
+  const [mintedNfts, setMintedNfts] = useState<any[]>([]);
 
   const handleMint = async () => {
     if (!connected || !publicKey) {
@@ -23,80 +26,89 @@ export const MintCard = () => {
 
     setIsLoading(true);
     try {
-      console.log('Starting mint process...');
+      console.log('Starting pack minting process...');
       
-      // Call the backend edge function to handle minting
+      // Call the backend edge function to handle pack minting (3 NFTs per pack)
       const { data, error } = await supabase.functions.invoke('mint-nft', {
         body: {
           walletAddress: publicKey.toString(),
-          quantity: mintQuantity
+          packQuantity: packQuantity
         }
       });
 
       if (error) {
-        throw new Error(error.message || 'Minting failed');
+        throw new Error(error.message || 'Pack minting failed');
       }
 
       if (!data.success) {
-        throw new Error(data.error || 'Minting failed');
+        throw new Error(data.error || 'Pack minting failed');
       }
 
-      console.log('Mint successful:', data.data);
-      toast.success(`Successfully minted ${mintQuantity} NFT${mintQuantity > 1 ? 's' : ''}!`, {
-        description: `Transaction: ${data.data.transactionSignature.slice(0, 20)}...`
-      });
+      console.log('Pack mint successful:', data.data);
+      setMintedNfts(data.data.mintedNfts);
+      setShowPackOpening(true);
       
     } catch (error) {
-      console.error('Mint failed:', error);
-      toast.error(`Minting failed: ${error.message}`);
+      console.error('Pack mint failed:', error);
+      toast.error(`Pack minting failed: ${error.message}`);
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <Card className="neon-border bg-card/50 backdrop-blur-sm">
-      <CardHeader className="text-center">
-        <CardTitle className="text-2xl neon-glow text-neon-purple">
-          Mint Your NFTs
-        </CardTitle>
-        <CardDescription className="text-muted-foreground">
-          Mint exclusive NFTs for your play-to-earn card battle game
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="space-y-6">
-        {/* Mint Quantity */}
-        <div className="space-y-2">
-          <Label htmlFor="quantity" className="text-foreground">
-            Quantity to Mint
-          </Label>
-          <Input
-            id="quantity"
-            type="number"
-            min="1"
-            max="10"
-            value={mintQuantity}
-            onChange={(e) => setMintQuantity(Math.max(1, parseInt(e.target.value) || 1))}
-            className="neon-border bg-input/50"
-          />
-        </div>
+    <div>
+      <Card className="neon-border bg-card/50 backdrop-blur-sm">
+        <CardHeader className="text-center">
+          <CardTitle className="text-2xl neon-glow text-neon-purple">
+            Open Diamond Packs
+          </CardTitle>
+          <CardDescription className="text-muted-foreground">
+            Each pack contains 3 random NFTs from the Diamond Nutted Nation collection
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          {/* Pack Quantity - Smaller UI */}
+          <div className="space-y-2">
+            <Label htmlFor="packs" className="text-foreground text-sm">
+              Number of Packs (3 NFTs each)
+            </Label>
+            <div className="flex items-center space-x-3">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setPackQuantity(Math.max(1, packQuantity - 1))}
+                disabled={packQuantity <= 1}
+                className="neon-border w-10 h-10"
+              >
+                -
+              </Button>
+              <span className="text-2xl font-bold text-neon-purple w-12 text-center">
+                {packQuantity}
+              </span>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setPackQuantity(Math.min(5, packQuantity + 1))}
+                disabled={packQuantity >= 5}
+                className="neon-border w-10 h-10"
+              >
+                +
+              </Button>
+            </div>
+          </div>
 
-        {/* Stats */}
-        <div className="grid grid-cols-3 gap-4">
+        {/* Stats - Removed Rarity */}
+        <div className="grid grid-cols-2 gap-4">
           <div className="text-center p-3 rounded-lg bg-muted/20 neon-border">
-            <Coins className="h-6 w-6 text-neon-cyan mx-auto mb-1" />
-            <div className="text-sm text-muted-foreground">Price</div>
-            <div className="font-bold text-neon-cyan">0.1 SOL</div>
+            <Package className="h-6 w-6 text-neon-cyan mx-auto mb-1" />
+            <div className="text-sm text-muted-foreground">Pack Price</div>
+            <div className="font-bold text-neon-cyan">0.3 SOL</div>
           </div>
           <div className="text-center p-3 rounded-lg bg-muted/20 neon-border">
             <Shield className="h-6 w-6 text-neon-green mx-auto mb-1" />
-            <div className="text-sm text-muted-foreground">Remaining</div>
-            <div className="font-bold text-neon-green">1,000</div>
-          </div>
-          <div className="text-center p-3 rounded-lg bg-muted/20 neon-border">
-            <Zap className="h-6 w-6 text-neon-pink mx-auto mb-1" />
-            <div className="text-sm text-muted-foreground">Rarity</div>
-            <div className="font-bold text-neon-pink">Epic</div>
+            <div className="text-sm text-muted-foreground">Packs Left</div>
+            <div className="font-bold text-neon-green">333</div>
           </div>
         </div>
 
@@ -125,16 +137,24 @@ export const MintCard = () => {
           {isLoading ? (
             <>
               <Loader2 className="h-5 w-5 animate-spin mr-2" />
-              Minting...
+              Opening Packs...
             </>
           ) : (
             <>
-              <Zap className="h-5 w-5 mr-2" />
-              Mint {mintQuantity} NFT{mintQuantity > 1 ? 's' : ''}
+              <Package className="h-5 w-5 mr-2" />
+              Open {packQuantity} Pack{packQuantity > 1 ? 's' : ''} ({packQuantity * 3} NFTs)
             </>
           )}
         </Button>
       </CardContent>
     </Card>
+
+    {/* Pack Opening Modal */}
+    <PackOpening 
+      isOpen={showPackOpening}
+      onClose={() => setShowPackOpening(false)}
+      mintedNfts={mintedNfts}
+    />
+  </div>
   );
 };
